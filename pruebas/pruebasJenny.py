@@ -19,52 +19,46 @@ tipoLicencia= soup.find_all('h2')
 patronST=r'Licencia [A-Z]\d+'
 subtipo=soup.find_all('h3',string=re.compile(patronST))
 
-for element in tipoLicencia:
-    # Retrieve the title
-    title = element.text.strip()
-    print(title)
+for tipo in tipoLicencia:
+    # consigue el titulo 
+    titulo = tipo.text.strip()
+    print(titulo)
     
-    # Retrieve the subtitles, comments, and requirements
-    subtitles = []
-    comments = []
-    requirements = []
+    ListaSubtipo = []
+    listaComentarios = []
+    listaReque = []
 
-    # Find the next siblings until the next 'h2' tag
-    next_sibling = element.next_sibling
+    # Encuentra todos los datos dentro del 'h2' tag
+    next_sibling = tipo.next_sibling
     while next_sibling and next_sibling.name != 'h2':
         if next_sibling.name == 'h3':
-            # Retrieve subtitles
-            subtitle = next_sibling.text.strip()
-            subtitles.append(subtitle)
-            comment = next_sibling.find_next_sibling('p')
-            comment=comment.text.strip()
-            comments.append(comment)
-            #print('EEEE',subtitle)
+            # extrae subtipo,comentario,requerimientos 
+            subTipo = next_sibling.text.strip()
+            ListaSubtipo.append(subTipo)
+            comentario = next_sibling.find_next_sibling('p')
+            comentario=comentario.text.strip()
+            listaComentarios.append(comentario)
 
-            if re.findall(r'Licencia D\d+', subtitle):
-                requirements = [
+            if re.findall(r'Licencia D\d+', subTipo):
+                listaReque = [
                     'Cédula o documento de identificación.',
                     'Dictamen médico digital para licencia.',
                     'Aprobar el curso teórico básico para licencia.'
                 ]
-                requirements = [requirements] * len(subtitles)
-                requirements.append(requirement)
+                listaReque = [listaReque] * len(ListaSubtipo)
+                listaReque.append(requerimientos)
             else:
-                requirement = next_sibling.find_next_sibling('ul')
-                requirement=requirement.text.strip()
-                requirements.append(requirement)
+                requerimientos = next_sibling.find_next_sibling('ul')
+                requerimientos=requerimientos.text.strip()
+                listaReque.append(requerimientos)
         
         next_sibling = next_sibling.next_sibling
 
-    # Imprimir todo
-    #requirements = [requirements] * len(subtitles)
-
-    # Print the subtitles, comments, and requirements
-    for subtitle, comment, requirement in zip(subtitles, comments, requirements):
-        print(subtitle)
-        print(comment)
-        print(requirement)
-       
+    # Print de la informacion que saco, el zip permite hacerlo todo en conjunto
+    for subTipo, comentario, requerimientos in zip(ListaSubtipo, listaComentarios, listaReque):
+        print(subTipo)
+        print(comentario)
+        print(requerimientos)
         print()
 
     print('-'.center(100,'-'))  # Print an empty line between each type
