@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import xml.etree.cElementTree as ET 
+from archivos import *
+
 #definicion de funciones
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
 resultado= requests.get(website)
@@ -20,9 +22,14 @@ tipoLicencia= soup.find_all('h2')
 patronST=r'Licencia [A-Z]\d+'
 subtipo=soup.find_all('h3',string=re.compile(patronST))
 
+# XML
+raiz=ET.Element('Tipos de Licencias')
+#
+
 for tipo in tipoLicencia:
     # consigue el titulo 
     titulo = tipo.text.strip()
+    subElemento=ET.SubElement(raiz, titulo)
     print(titulo)
     
     ListaSubtipo = []
@@ -40,6 +47,9 @@ for tipo in tipoLicencia:
             comentario=comentario.text.strip()
             listaComentarios.append(comentario)
 
+            subTipos= ET.SubElement(subElemento,subTipo)
+            subTipos.text=comentario
+
             if re.findall(r'Licencia D\d+', subTipo):
                 listaReque = [
                     'Cédula o documento de identificación.',
@@ -48,33 +58,14 @@ for tipo in tipoLicencia:
                 ]
                 listaReque = [listaReque] * len(ListaSubtipo)
                 listaReque.append(requerimientos)
+                subTipos.text=listaReque
             else:
                 requerimientos = next_sibling.find_next_sibling('ul')
                 requerimientos=requerimientos.text.strip()
                 listaReque.append(requerimientos)
+                subTipos.text=listaReque
         
         next_sibling = next_sibling.next_sibling
-
-    # Print de la informacion que saco, el zip permite hacerlo todo en conjunto
-    for subTipo, comentario, requerimientos in zip(ListaSubtipo, listaComentarios, listaReque):
-        print(subTipo)
-        print(comentario)
-        print(requerimientos)
-        print()
-
-    print('-'.center(100,'-'))  # Print an empty line between each type
-
-
-# for st in subtipo:
-#     comentario = st.find_next_sibling('p')
-#     requisitos_header = comentario.find_next_sibling('h4')
-#     requisitos = requisitos_header.find_next_sibling('ul').find_all('li')
-    
-#     print(st.text.strip())
-#     print(comentario.text.strip())
-#     print('Requisitos:')
-#     for requisito in requisitos:
-#         print('- ' + requisito.text.strip())
-    
-#     print('-' * 30)
-
+    tree=ET.ElementTree(raiz)
+grabar('informacion.html',tree)
+print(raiz)
