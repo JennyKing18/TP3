@@ -30,7 +30,7 @@ for tipo in tipoLicencia:
     # consigue el titulo 
     titulo = tipo.text.strip()
     subElemento=ET.SubElement(raiz, titulo)
-    print(titulo)
+    print(f'\033[1;30;44m {titulo} \033[0;0m')
     
     ListaSubtipo = []
     listaComentarios = []
@@ -46,26 +46,33 @@ for tipo in tipoLicencia:
             comentario = next_sibling.find_next_sibling('p')
             comentario=comentario.text.strip()
             listaComentarios.append(comentario)
+            #print(type(subTipo),type(comentario))
 
             subTipos= ET.SubElement(subElemento,subTipo)
             subTipos.text=comentario
 
             if re.findall(r'Licencia D\d+', subTipo):
-                listaReque = [
-                    'Cédula o documento de identificación.',
-                    'Dictamen médico digital para licencia.',
-                    'Aprobar el curso teórico básico para licencia.'
-                ]
+                listaReque = 'Cédula o documento de identificación.\nDictamen médico digital para licencia.\nAprobar el curso teórico básico para licencia.'
+                
                 listaReque = [listaReque] * len(ListaSubtipo)
-                listaReque.append(requerimientos)
-                subTipos.text=listaReque
+                #listaReque.append([listaReque])
+                subTipos.text=str(listaReque)
             else:
                 requerimientos = next_sibling.find_next_sibling('ul')
                 requerimientos=requerimientos.text.strip()
                 listaReque.append(requerimientos)
-                subTipos.text=listaReque
+                subTipos.text=str(listaReque)
         
         next_sibling = next_sibling.next_sibling
-    tree=ET.ElementTree(raiz)
-grabar('informacion.html',tree)
-print(raiz)
+    for subTipo, comentario, requerimientos in zip(ListaSubtipo, listaComentarios, listaReque):
+        print('-'.center(100,'-'))
+        print(subTipo)
+        print(comentario,'\n')
+        print('Requerimientos:\n'+requerimientos)
+        print()
+
+    print('-'.center(100,'-'))
+tree=ET.ElementTree(raiz)
+tree.write(str('informacion.xml'))
+    #grabar('informacion.xml',tree)
+#print(raiz)
