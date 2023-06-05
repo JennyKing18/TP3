@@ -3,6 +3,17 @@ import pickle
 def graba(nomArchGrabar,lista):
     #Función que graba un archivo en una lista 
     try:
+        f=open(nomArchGrabar,"w")
+        f.write(lista)
+        f.close()
+    except TypeError:
+        print('Error: Se esperaba un dato str y una lista/matriz/tupla/str')
+    except:
+        print('Error inesperado al guardar archivo:'+ nomArchGrabar) 
+
+def grabaB(nomArchGrabar,lista):
+    #Función que graba un archivo en una lista 
+    try:
         f=open(nomArchGrabar,"wb")
         pickle.dump(lista,f)
         f.close()

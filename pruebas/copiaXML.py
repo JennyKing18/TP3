@@ -1,15 +1,9 @@
-###########################################################
-#Elaborado por Jenny King Josue Salazar
-#Fecha de creacion 02/06/23 10:30am
-#Ultima modificacion 02/06/23 10:30am
-#version 3.10.6
-###########################################################
-#importacion de librerias
 from bs4 import BeautifulSoup
 import requests
 import re
 import xml.etree.cElementTree as ET 
 from archivos import *
+
 
 #definicion de funciones
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
@@ -58,7 +52,7 @@ def crearXML():
         print('-'.center(100,'-'))
     tree=ET.ElementTree(raiz)
     tree.write(str('informacion.xml'))
+    temp=BeautifulSoup(open('informacion.xml'),'xml')
+    prettyTemp= temp.prettify()
+    graba('informacion.xml',prettyTemp)
     return ''
-print(crearXML())
-#grabar('informacion.xml',tree)
-#print(raiz)
