@@ -12,8 +12,8 @@ import xml.etree.cElementTree as ET
 from archivos import *
 import random
 import names
-from datetime import datetime,timedelta
-
+from datetime import *
+from dateutil.relativedelta import relativedelta
 #variables globales
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
 resultado= requests.get(website) 
@@ -131,7 +131,7 @@ def generarSedes():
     return sede
 
 def asignarSede(cedula):
-    codificacion={1:'San jose',2:'Alajuela',3:'Cartago',4:'Heredia',5:'GUanacaste',6:'Puntarenas',7:'Limon'}
+    codificacion={1:'San jose',2:'Alajuela',3:'Cartago',4:'Heredia',5:'Guanacaste',6:'Puntarenas',7:'Limon'}
     cedula=int(cedula[0])
     dicc=generarSedes()
     #sedes=list(dicc.keys())
@@ -160,8 +160,6 @@ def asignarSede(cedula):
         ubic=list(dicc[codificacion[1]])
         return len(ubic)
 
-
-#puntaje
 def generarCorreo(nombreCompleto):
     '''
     F: Generar un correo
@@ -171,9 +169,55 @@ def generarCorreo(nombreCompleto):
     correo=''
     correo+=nombreCompleto[1]+nombreCompleto[1][0:2]+nombreCompleto[2][0:2]+'@gmail.com'
     return correo
-def crearLicencias():
-    donador=random.choice([True, False])
-    sangre=random.choice(['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB'])
-    return donador,sangre
 
-print(asignarLicencia())
+def calcularEdad(fechaNac):
+    fechaNac=datetime.strptime(fechaNac,"%d-%m-%Y")
+    hoy = datetime.today()
+    edad = hoy.year - fechaNac.year - ((hoy.month, hoy.day) < (fechaNac.month, fechaNac.day))
+    if int(edad) >= 18:
+        return edad 
+    return False
+
+def calcularFechaVN(fechaNac):
+    hoy = date.today()
+    edad = calcularEdad(fechaNac)
+    if edad >= 18 and edad <= 25:
+        vencimiento = hoy + relativedelta(years=3)
+        return vencimiento.strftime("%d-%m-%Y")
+    vencimiento = hoy + relativedelta(years=5)
+    return vencimiento.strftime("%d-%m-%Y")
+
+def crearLicencias(num):
+    BD=[]
+    i=0
+    while i < num:
+        persona=[]
+        cedula= generarCedula()
+        nombre=generarNombre()#hacer join para sacar de la tupla
+        fechaNac=generarFN()
+        fechaExpe= date.today().strftime("%d-%m-%Y")
+        correo=generarCorreo(nombre)
+        sangre=random.choice(['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB'])
+        if calcularEdad(fechaNac)!= False:
+            tipoLicencia=asignarLicencia() 
+            fechaVenc= calcularFechaVN(fechaNac)
+            donador=random.choice([True, False])
+            sede= asignarSede(cedula)
+            puntaje= 12-random.randint(0,12)
+        else:
+            tipoLicencia='-' #si no es mayor de edad no tiene nada de esto
+            fechaVenc= '-'
+            donador='-'
+            sede= '-'
+            puntaje='-'
+        persona.extend([cedula,nombre,fechaNac,fechaExpe,correo,sangre,tipoLicencia,fechaVenc,donador,sede,puntaje])
+        BD.append(persona)
+        i+=1
+    return BD
+
+# fecha=generarFN()
+# print(date.today().strftime("%d-%m-%Y"))
+# print(calcularEdad(fecha))
+# print(calcularFechaVN(fecha))
+
+print(crearLicencias(3))
