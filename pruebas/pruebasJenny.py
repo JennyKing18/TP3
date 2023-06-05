@@ -14,6 +14,9 @@ import random
 import names
 from datetime import *
 from dateutil.relativedelta import relativedelta
+from clases import *
+from clases import Registro
+
 #variables globales
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
 resultado= requests.get(website) 
@@ -22,7 +25,12 @@ soup=BeautifulSoup(contenido,'html.parser')
 tipoLicencia= soup.find_all('h2')
 patronST=r'Licencia [A-Z]\d+'
 subtipo=soup.find_all('h3',string=re.compile(patronST))
-#definicion de funciones
+
+# >>>> Instanciar clase
+conductores= Registro()
+
+# Definicion de Funciones
+# 1 Crear XML
 def crearXML():
     raiz=ET.Element('TiposDeLicencias')
     for tipo in tipoLicencia:
@@ -77,7 +85,7 @@ def obtenerSubtipos():
         lista.append(subtipo)
     return lista
 
-# CREAR LICENCIAS
+# funciones de >>> CREAR LICENCIAS
 def generarCedula(): 
     cedula=''
     cedula+=str(random.randint(1, 9))
@@ -96,14 +104,14 @@ def generarNombre():
     nomCompleto=[nombre,apellido1,apellido2]
     return tuple(nomCompleto)
 
-def generarFN(): #FechaNacimiento
+def generarFechaNac(): #FechaNacimiento
     inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
     rangoDia= finalFN-inicioFN
     dia=random.randint(1,rangoDia.days)
     fecha = inicioFN + timedelta(days=dia)
     formato=fecha.strftime("%d-%m-%Y")
     return formato
-#fecha vencimiento
+
 def asignarLicencia():
     listaTipos= obtenerSubtipos()
     tope=len(listaTipos)
@@ -134,7 +142,6 @@ def asignarSede(cedula):
     codificacion={1:'San jose',2:'Alajuela',3:'Cartago',4:'Heredia',5:'Guanacaste',6:'Puntarenas',7:'Limon'}
     cedula=int(cedula[0])
     dicc=generarSedes()
-    #sedes=list(dicc.keys())
     if cedula == 1:
         ubic=list(dicc[codificacion[1]])
         return len(ubic)
@@ -178,7 +185,7 @@ def calcularEdad(fechaNac):
         return edad 
     return False
 
-def calcularFechaVN(fechaNac):
+def calcularFechaVenc(fechaNac):
     hoy = date.today()
     edad = calcularEdad(fechaNac)
     if edad >= 18 and edad <= 25:
@@ -187,37 +194,58 @@ def calcularFechaVN(fechaNac):
     vencimiento = hoy + relativedelta(years=5)
     return vencimiento.strftime("%d-%m-%Y")
 
+# 2 Crear licencias
 def crearLicencias(num):
-    BD=[]
     i=0
-    while i < num:
-        persona=[]
+    while i < num: 
         cedula= generarCedula()
+        conductores.asignarCedula(cedula)
         nombre=generarNombre()#hacer join para sacar de la tupla
-        fechaNac=generarFN()
+        conductores.asignarNombre(nombre)
+        fechaNac=generarFechaNac()
+        conductores.asignarFechaNac(fechaNac)
         fechaExpe= date.today().strftime("%d-%m-%Y")
+        conductores.asignarFechaExp(fechaExpe)
         correo=generarCorreo(nombre)
+        conductores.asignarCorreo(correo)
         sangre=random.choice(['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB'])
+        conductores.asignarSangre(sangre)
         if calcularEdad(fechaNac)!= False:
             tipoLicencia=asignarLicencia() 
-            fechaVenc= calcularFechaVN(fechaNac)
+            conductores.asignarTipoLicencia(tipoLicencia)
+            fechaVenc= calcularFechaVenc(fechaNac)
+            conductores.asignarFechaVenc(fechaVenc)
             donador=random.choice([True, False])
+            conductores.asignarDonador(donador)
             sede= asignarSede(cedula)
+            conductores.asignarSede(sede)
             puntaje= 12-random.randint(0,12)
+            conductores.asignarPuntaje(puntaje)
         else:
             tipoLicencia='-' #si no es mayor de edad no tiene nada de esto
+            conductores.asignarTipoLicencia(tipoLicencia)
             fechaVenc= '-'
+            conductores.asignarFechaVenc(fechaVenc)
             donador='-'
+            conductores.asignarDonador(donador)
             sede= '-'
+            conductores.asignarSede(sede)
             puntaje='-'
-        persona.extend([cedula,nombre,fechaNac,fechaExpe,correo,sangre,tipoLicencia,fechaVenc,donador,sede,puntaje])
-        BD.append(persona)
+            conductores.asignarPuntaje(puntaje)
+        registro.append(conductores)
+        print([cedula,nombre])
+        grabaBinario('BaseDatos',conductores)
         i+=1
-    return BD
+    #mostrar lista
+    lista = lee('BaseDatos')
+    for i in range(len(lista)):
+        print(i+1,')',lista[i].indicarDatos())
+        print('='.center(100,'='))
+    return ''
 
-# fecha=generarFN()
+# fecha=generarFechaNac()
 # print(date.today().strftime("%d-%m-%Y"))
 # print(calcularEdad(fecha))
-# print(calcularFechaVN(fecha))
+# print(calcularFechaVenc(fecha))
 
 print(crearLicencias(3))

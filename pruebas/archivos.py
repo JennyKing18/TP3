@@ -11,10 +11,10 @@ def graba(nomArchGrabar,lista):
     except:
         print('Error inesperado al guardar archivo:'+ nomArchGrabar) 
 
-def grabaB(nomArchGrabar,lista):
+def grabaBinario(nomArchGrabar,lista):
     #Función que graba un archivo en una lista 
     try:
-        f=open(nomArchGrabar,"wb")
+        f=open(nomArchGrabar,"ab")
         pickle.dump(lista,f)
         f.close()
     except TypeError:
@@ -23,12 +23,20 @@ def grabaB(nomArchGrabar,lista):
         print('Error inesperado al guardar archivo:'+ nomArchGrabar)
 
 def lee (nomArchLeer):
-    #Función que lee un archivo con una lista de estudiantes
-    lista=[]
+    #Función que lee un archivo 
     try:
         f=open(nomArchLeer,"rb")
-        lista = pickle.load(f)
-        f.close()
+        objs = []
+        while True:
+            try:
+                obj = pickle.load(f)
+            except EOFError:
+                break
+            objs.append(obj) # esta mica es quien mete la mlista dentro de una lista
+        return objs
+    except FileNotFoundError:
+        lista = []
     except:
         print("Error al leer el archivo: ", nomArchLeer)
+        return False
     return lista
