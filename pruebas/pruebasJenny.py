@@ -68,22 +68,14 @@ def crearXML():
     graba('informacion.xml',prettyTemp)
     return ''
 
-def obtener_subtipos():
+def obtenerSubtipos():
     tree = ET.parse('informacion.xml')
     root = tree.getroot()
-    lista_subtipos = []
-
-    # Recorrer todos los elementos en el XML
+    lista = []
     for elemento in root.iter('SubTipo'):
-        # Obtener el texto del SubTipo
-        subtipo_texto = elemento.text.strip()
-
-        # Obtener la información dentro de la etiqueta <info>
-        
-        # Agregar el SubTipo y su información a la lista
-        lista_subtipos.append(subtipo_texto)
-
-    return lista_subtipos
+        subtipo = elemento.text.strip()
+        lista.append(subtipo)
+    return lista
 
 # CREAR LICENCIAS
 def generarCedula(): 
@@ -104,15 +96,20 @@ def generarNombre():
     nomCompleto=[nombre,apellido1,apellido2]
     return tuple(nomCompleto)
 
-def generarCorreo(nombreCompleto):
-    '''
-    F: Generar un correo
-    E: nombreCompleto(tupla)
-    S: correo(str)
-    '''
-    correo=''
-    correo+=nombreCompleto[1]+nombreCompleto[1][0:2]+nombreCompleto[2][0:2]+'@gmail.com'
-    return correo
+def generarFN(): #FechaNacimiento
+    inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
+    rangoDia= finalFN-inicioFN
+    dia=random.randint(1,rangoDia.days)
+    fecha = inicioFN + timedelta(days=dia)
+    formato=fecha.strftime("%d-%m-%Y")
+    return formato
+#fecha vencimiento
+def asignarLicencia():
+    listaTipos= obtenerSubtipos()
+    tope=len(listaTipos)
+    num=random.randint(0,tope-1)
+    licencia=listaTipos[num]
+    return licencia
 
 def limpiarTexto(texto):
     texto = re.sub(r'[*\n]', '', texto)
@@ -163,17 +160,20 @@ def asignarSede(cedula):
         ubic=list(dicc[codificacion[1]])
         return len(ubic)
 
-def generarFN(): #FechaNacimiento
-    inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
-    rangoDia= finalFN-inicioFN
-    dia=random.randint(1,rangoDia.days)
-    fecha = inicioFN + timedelta(days=dia)
-    formato=fecha.strftime("%d-%m-%Y")
-    return formato
 
+#puntaje
+def generarCorreo(nombreCompleto):
+    '''
+    F: Generar un correo
+    E: nombreCompleto(tupla)
+    S: correo(str)
+    '''
+    correo=''
+    correo+=nombreCompleto[1]+nombreCompleto[1][0:2]+nombreCompleto[2][0:2]+'@gmail.com'
+    return correo
 def crearLicencias():
     donador=random.choice([True, False])
     sangre=random.choice(['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB'])
     return donador,sangre
 
-print(obtener_subtipos())
+print(asignarLicencia())
