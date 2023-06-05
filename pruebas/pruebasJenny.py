@@ -101,8 +101,8 @@ def generarNombre():
     nombre= names.get_first_name() 
     apellido1= names.get_last_name()
     apellido2= names.get_last_name()
-    nomCompleto=[nombre,apellido1,apellido2]
-    return tuple(nomCompleto)
+    nomCompleto=nombre+' '+apellido1+' '+apellido2
+    return nomCompleto
 
 def generarFechaNac(): #FechaNacimiento
     inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
