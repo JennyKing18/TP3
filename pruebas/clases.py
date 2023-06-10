@@ -117,7 +117,7 @@ class Registro:
                 f'\nTipo de Licencia: {self.tipoLicencia}'+
                 f'\nTipo de Sangre: {self.sangre}'+
                 f'\nDonador: {self.donador}'+
-                f'\nSedes Disponibles: {self.sede}'+
+                f'\nSede: {self.sede}'+
                 f'\nPuntaje: {self.puntaje}'+
                 f'\nCorreo electrónico: {self.correo}')
         return info

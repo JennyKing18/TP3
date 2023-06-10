@@ -18,6 +18,7 @@ from dateutil.relativedelta import relativedelta
 from clases import *
 from clases import Registro
 import aspose.pdf as ap
+from fpdf import FPDF
 
 #variables globales
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
@@ -149,28 +150,35 @@ def asignarSede(cedula):
     dicc=generarSedes()
     if cedula == 1:
         ubic=list(dicc[codificacion[1]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede #anteriormente no tenia sede return len(ubic)
     elif cedula ==2:
         ubic=list(dicc[codificacion[2]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede
     elif cedula==3:
         ubic=list(dicc[codificacion[3]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede
     elif cedula==4:
         ubic=list(dicc[codificacion[4]])
         return len(ubic)
     elif cedula ==5:
         ubic=list(dicc[codificacion[5]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede
     elif cedula==6:
         ubic=list(dicc[codificacion[6]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede
     elif cedula==7:
         ubic=list(dicc[codificacion[7]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede
     else:
         ubic=list(dicc[codificacion[1]])
-        return len(ubic)
+        sede=ubic[random.randint(0,len(ubic)-1)]
+        return sede
 
 def generarCorreo(nombreCompleto):
     '''
@@ -263,26 +271,10 @@ def validarCedula(cedula):
         print('Cedula valida!')
         return cedula
     else:
-        print('Cedula cumple con el formato.')
+        print('Cedula cumple con el formato 0-0000-0000.')
 
-def obtenerTexto(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre):
-    doc=f'''REPUBLICA DE COSTA RICA
-    Licencia de conducir
-    N°:CI-{cedula}
-    Expedición:{fechaExp}
-    Nacimiento:{fechaNac}
-    Vencimiento:{fechaVenc}
-    Tipo:{tipo}
-    Donador:{donador}
-    T.S.{sangre}
-    {nombre}
-    fecha hora lugar'''
-
-    return
-
-def generarPDF(cedula):
+def obtenerDatos(cedula):
     lista=lee('BaseDatos')
-    doc=''
     for i in range(len(lista)):
         if cedula == lista[i].mostrarCedula():
             fechaExp= lista[i].mostrarFechaExp()
@@ -292,9 +284,91 @@ def generarPDF(cedula):
             donador= lista[i].mostrarDonador()
             sangre= lista[i].mostrarSangre()
             nombre= lista[i].mostrarNombre()
-            obtenerTexto(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre)
-    return
+            sede=lista[i].mostrarSede()
+            return generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sede)
+    else:
+        print('No se encontro la cedula que busca')
 
+def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sede):
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_text_color(12, 182, 242)  
+    pdf.set_font('helvetica', 'B', 12)  
+    pdf.multi_cell(200, 10, txt='REPUBLICA DE COSTA RICA')
+    pdf.ln(6)
+
+    pdf.set_text_color(242, 46, 46)  #rojo
+    pdf.set_font('helvetica','', 10)  
+    pdf.cell(200, 10, txt='Licencia de conducir')
+    pdf.ln(6)
+
+    pdf.set_text_color(0, 0, 0)  
+    pdf.set_font('helvetica','B', 10)
+    pdf.write(10, 'N°: ')
+    pdf.set_text_color(242, 46, 46) 
+    pdf.cell(200,10,f'CI-{cedula}')
+    pdf.ln(6)
+
+    pdf.set_text_color(0, 0, 0)  
+    pdf.set_font('helvetica','B', 10)
+    pdf.write(10, 'Expedición: ')
+    pdf.set_font('helvetica','', 10)
+    pdf.cell(200,10,f'{fechaExp}')
+    pdf.ln(6)
+
+    pdf.set_text_color(0, 0, 0)  
+    pdf.set_font('helvetica','B', 10)
+    pdf.write(10, 'Nacimiento: ')
+    pdf.set_font('helvetica','', 10)
+    pdf.cell(200,10,f'{fechaNac}')
+    pdf.ln(6)
+
+    pdf.set_text_color(0, 0, 0)  
+    pdf.set_font('helvetica','B', 10)
+    pdf.write(10, 'Vencimiento: ')
+    pdf.set_font('helvetica','', 10)
+    pdf.set_text_color(242, 46, 46)
+    pdf.cell(200,10,f'{fechaVenc}')
+    pdf.ln(6)
+    
+    #pdf.set_text_color(242, 46, 46)
+    pdf.set_font('helvetica','B', 10)
+    pdf.write( 10, 'Tipo: ')
+    pdf.set_font('helvetica','B', 13)
+    pdf.cell(200,10,f'{tipo}')
+    pdf.ln(6)
+
+    pdf.set_text_color(242, 46, 46)
+    pdf.set_font('helvetica','B', 10)
+    pdf.write(10,'Donador: ')
+    pdf.set_font('helvetica','', 10)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(200,10,f'{donador}')
+    pdf.ln(6)
+
+    pdf.write(10, 'T.S. ')
+    pdf.set_text_color(242, 46, 46)
+    pdf.cell(200,10,f'{sangre}')
+    pdf.ln(6)
+
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('helvetica','B', 20)
+    pdf.cell(200, 10, nombre)
+    pdf.ln(6)
+
+    pdf.set_font('helvetica','', 8)
+    pdf.cell(200, 10, f'{date.today().strftime("%d-%m-%Y")} {datetime.now().strftime("%H:%M")} {sede}')
+
+    pdf.output(f'Licencia-{cedula}.pdf')   
+    return ''
+# def generarPDF(cedula,texto):
+#     pdf =ap.Document()
+#     pagina=pdf.pages.add()
+#     contenido=ap.text.TextFragment(texto)
+#     pagina.paragraphs.add(contenido)
+#     pdf.save(f'Licencia-{cedula}.pdf')
+#     return
 ####################
 # 5 Reportes Excel #
 ####################
@@ -310,4 +384,6 @@ def generarPDF(cedula):
 # print(calcularEdad(fecha))
 # print(calcularFechaVenc(fecha))
 
-print(crearLicencias(3))
+#print(crearLicencias(3))
+#print(lee('BaseDatos'))
+print(obtenerDatos('9-1058-7006'))
