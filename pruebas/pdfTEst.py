@@ -1,4 +1,5 @@
 ###########################################################
+###########################################################
 #Elaborado por Jenny King Josue Salazar
 #Fecha de creacion 02/06/23 10:30am
 #Ultima modificacion 02/06/23 10:30am
@@ -257,10 +258,41 @@ def crearLicencias(num):
 #################
 # 4 Generar PDF #
 #################
-def validarBusqueda(cedula):
+def validarCedula(cedula):
+    if re.match('^[1-9]{1}\d{8}$',cedula):
+        print('Cedula valida!')
+        return cedula
+    else:
+        print('Cedula cumple con el formato.')
+
+def obtenerTexto(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre):
+    doc=f'''REPUBLICA DE COSTA RICA
+    Licencia de conducir
+    N°:CI-{cedula}
+    Expedición:{fechaExp}
+    Nacimiento:{fechaNac}
+    Vencimiento:{fechaVenc}
+    Tipo:{tipo}
+    Donador:{donador}
+    T.S.{sangre}
+    {nombre}
+    fecha hora lugar'''
+
     return
 
-def generarPDF():
+def generarPDF(cedula):
+    lista=lee('BaseDatos')
+    doc=''
+    for i in range(len(lista)):
+        if cedula == lista[i].mostrarCedula():
+            fechaExp= lista[i].mostrarFechaExp()
+            fechaNac= lista[i].mostrarFechaNac()
+            fechaVenc= lista[i].mostrarFechaVenc()
+            tipo= lista[i].mostrarTipoLicencia()
+            donador= lista[i].mostrarDonador()
+            sangre= lista[i].mostrarSangre()
+            nombre= lista[i].mostrarNombre()
+            obtenerTexto(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre)
     return
 
 ####################
