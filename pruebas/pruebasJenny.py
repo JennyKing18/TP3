@@ -98,11 +98,12 @@ def generarCedula():
     return cedula
 
 def generarNombre():
-    nombre= names.get_first_name() 
-    apellido1= names.get_last_name()
-    apellido2= names.get_last_name()
-    nomCompleto=nombre+' '+apellido1+' '+apellido2
-    return nomCompleto
+    nombreCompleto=[]
+    nombreCompleto.append( names.get_first_name() )
+    nombreCompleto.append( names.get_last_name() )
+    nombreCompleto.append( names.get_last_name() )
+    nombreCompleto=tuple(nombreCompleto)
+    return nombreCompleto
 
 def generarFechaNac(): #FechaNacimiento
     inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
@@ -174,7 +175,8 @@ def generarCorreo(nombreCompleto):
     S: correo(str)
     '''
     correo=''
-    correo+=nombreCompleto[1]+nombreCompleto[1][0:2]+nombreCompleto[2][0:2]+'@gmail.com'
+    print(nombreCompleto)
+    correo+=nombreCompleto[1]+nombreCompleto[2][0]+nombreCompleto[0][0]+'@gmail.com'
     return correo
 
 def calcularEdad(fechaNac):
@@ -200,8 +202,9 @@ def crearLicencias(num):
     while i < num: 
         cedula= generarCedula()
         conductores.asignarCedula(cedula)
-        nombre=generarNombre()#hacer join para sacar de la tupla
-        conductores.asignarNombre(nombre)
+        nombre=generarNombre()
+        #nombre=' '.join(nombre)
+        conductores.asignarNombre(' '.join(nombre))
         fechaNac=generarFechaNac()
         conductores.asignarFechaNac(fechaNac)
         fechaExpe= date.today().strftime("%d-%m-%Y")
@@ -233,7 +236,7 @@ def crearLicencias(num):
             puntaje='-'
             conductores.asignarPuntaje(puntaje)
         registro.append(conductores)
-        print([cedula,nombre])
+        print([cedula,nombre],'\n')
         grabaBinario('BaseDatos',conductores)
         i+=1
     #mostrar lista
