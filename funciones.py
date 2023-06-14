@@ -381,6 +381,6 @@ def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sed
 # print(calcularEdad(fecha))
 # print(calcularFechaVenc(fecha))
 
-#print(crearLicencias(3))
-print(obtenerDatos('8-8512-8454'))
+print(crearLicencias(2))
+#print(obtenerDatos('4-5092-5826'))
 #print(obtenerSubtipos())
