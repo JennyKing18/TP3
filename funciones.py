@@ -19,6 +19,7 @@ from clases import Registro
 import aspose.pdf as ap
 from fpdf import FPDF
 
+
 #variables globales
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
 resultado= requests.get(website) 
@@ -77,7 +78,7 @@ def crearXML():
     #hacer leible
     temp=BeautifulSoup(open('informacion.xml'),'xml')
     prettyTemp= temp.prettify()
-    grabaN('informacion.xml',prettyTemp)
+    graba('informacion.xml',prettyTemp)
     return ''
 
 def obtenerSubtipos():
@@ -113,7 +114,7 @@ def generarNombre():
     nombreCompleto=tuple(nombreCompleto)
     return nombreCompleto
 
-def generarFechaNac(): #FechaNacimiento
+def generarFechaNac(): 
     inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
     rangoDia= finalFN-inicioFN
     dia=random.randint(1,rangoDia.days)
@@ -363,7 +364,7 @@ def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sed
     pdf.set_font('helvetica','', 8)
     pdf.cell(200, 10, f'{date.today().strftime("%d-%m-%Y")} {datetime.now().strftime("%H:%M")} {sede}')
 
-    pdf.output(f'Licencia-{cedula}.pdf')   
+    pdf.output(f'Licencia#{cedula}.pdf')   
     return ''
 
 ####################
@@ -381,6 +382,6 @@ def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sed
 # print(calcularEdad(fecha))
 # print(calcularFechaVenc(fecha))
 
-print(crearLicencias(2))
+print(crearLicencias(3))
 #print(obtenerDatos('4-5092-5826'))
 #print(obtenerSubtipos())
