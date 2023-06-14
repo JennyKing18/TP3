@@ -77,7 +77,7 @@ def crearXML():
     #hacer leible
     temp=BeautifulSoup(open('informacion.xml'),'xml')
     prettyTemp= temp.prettify()
-    graba('informacion.xml',prettyTemp)
+    grabaN('informacion.xml',prettyTemp)
     return ''
 
 def obtenerSubtipos():
