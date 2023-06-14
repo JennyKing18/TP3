@@ -36,6 +36,11 @@ conductores= Registro()
 # 1 Crear XML #
 ###############
 def crearXML():
+    '''
+    F: Obtiene la informacion de una pagina web para crear un xml
+    E: -
+    S: -
+    '''
     raiz=ET.Element('TiposDeLicencias')
     for tipo in tipoLicencia:
         # consigue el titulo 
@@ -83,6 +88,11 @@ def crearXML():
     return ''
 
 def obtenerSubtipos():
+    '''
+    F: Del xml obtienen solo los subtipos de licencias
+    E: -
+    S: listaLimpia(list): lista solo con los subtipos
+    '''
     tree = ET.parse('informacion.xml')
     root = tree.getroot()
     lista = []
@@ -97,6 +107,11 @@ def obtenerSubtipos():
 
 # funciones de >>> CREAR LICENCIAS
 def generarCedula(): 
+    '''
+    F: Generar una cedula aleatoria con formato 0-0000-0000
+    E: -
+    S: cedula(str)
+    '''
     cedula=''
     cedula+=str(random.randint(1, 9))
     cedula += "-" 
@@ -108,6 +123,11 @@ def generarCedula():
     return cedula
 
 def generarNombre():
+    '''
+    F: Generar un nombre aleatorio
+    E: -
+    S: nombre(tuple)
+    '''
     nombreCompleto=[]
     nombreCompleto.append( names.get_first_name() )
     nombreCompleto.append( names.get_last_name() )
@@ -116,6 +136,11 @@ def generarNombre():
     return nombreCompleto
 
 def generarFechaNac(): 
+    '''
+    F: Genera una fecha de nacimiento con rango de 1970 al anno actual
+    E: -
+    S: formato(strftime)
+    '''
     inicioFN,finalFN = datetime(1970, 1, 1) , datetime.now()
     rangoDia= finalFN-inicioFN
     dia=random.randint(1,rangoDia.days)
@@ -124,6 +149,11 @@ def generarFechaNac():
     return formato
 
 def asignarLicencia():
+    '''
+    F: Asigna un tipo de licencia
+    E: -
+    S: licencia (str)
+    '''
     listaTipos= obtenerSubtipos()
     tope=len(listaTipos)
     num=random.randint(0,tope-1)
@@ -131,11 +161,21 @@ def asignarLicencia():
     return licencia
 
 def limpiarTexto(texto):
+    '''
+    F: Limpia caracteres especiales de un texto
+    E: texto > documemento con las sedes por provincia
+    S: texto > documento limpio
+    '''
     texto = re.sub(r'[*\n]', '', texto)
     texto = texto.replace('\u200b', '')
     return texto
 
 def generarSedes():
+    '''
+    F: Genera un diccionario por provincia con sus sedes
+    E: -
+    S: sede(dict)
+    '''
     sede={}
     ubic=[]
     archivo=open(r'sedes.txt',encoding="utf8").readlines()
@@ -150,6 +190,11 @@ def generarSedes():
     return sede
 
 def asignarSede(cedula):
+    '''
+    F: Asigna una sede segun la cedula
+    E: cedula
+    S: sede(str)
+    '''
     codificacion={1:'San jose',2:'Alajuela',3:'Cartago',4:'Heredia',5:'Guanacaste',6:'Puntarenas',7:'Limon'}
     cedula=int(cedula[0])
     dicc=generarSedes()
@@ -197,6 +242,11 @@ def generarCorreo(nombreCompleto):
     return correo
 
 def calcularEdad(fechaNac):
+    '''
+    F: Calcula la edad de la persona
+    E: fechaNac(strftime)
+    S: Edad/False
+    '''
     fechaNac=datetime.strptime(fechaNac,"%d-%m-%Y")
     hoy = datetime.today()
     edad = hoy.year - fechaNac.year - ((hoy.month, hoy.day) < (fechaNac.month, fechaNac.day))
@@ -205,6 +255,11 @@ def calcularEdad(fechaNac):
     return False
 
 def calcularFechaVenc(fechaNac):
+    '''
+    F: Calcula la fecha de vencimiento 
+    E: fechaNac(strftime)
+    S: vencimiento(strftime)
+    '''
     hoy = date.today()
     edad = calcularEdad(fechaNac)
     if edad >= 18 and edad <= 25:
@@ -216,6 +271,11 @@ def calcularFechaVenc(fechaNac):
 # 2 Crear licencias #
 #####################
 def crearLicencias(num):
+    '''
+    F: crea los datos para una licencia
+    E: num(int)
+    S: -
+    '''
     i=0
     while i < num: 
         cedula= generarCedula()
@@ -272,29 +332,24 @@ def crearLicencias(num):
 # 4 Generar PDF #
 #################
 def validarCedula(cedula):
+    '''
+    F: validar el formato de una cedula
+    E: cedula(str)
+    S: cedula(str)
+    '''
     if re.match('^[1-9]{1}\d{8}$',cedula):
         print('Cedula valida!')
         return cedula
     else:
         print('Cedula cumple con el formato 0-0000-0000.')
 
-def obtenerDatos(cedula):
-    lista=lee('BaseDatos')
-    for i in range(len(lista)):
-        if cedula == lista[i].mostrarCedula():
-            fechaExp= lista[i].mostrarFechaExp()
-            fechaNac= lista[i].mostrarFechaNac()
-            fechaVenc= lista[i].mostrarFechaVenc()
-            tipo= lista[i].mostrarTipoLicencia()
-            donador= lista[i].mostrarDonador()
-            sangre= lista[i].mostrarSangre()
-            nombre= lista[i].mostrarNombre()
-            sede=lista[i].mostrarSede()
-            return generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sede)
-    else:
-        print('No se encontro la cedula que busca')
-
 def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sede):
+    '''
+    F: Generar un pdf de la informacion de la licencia
+    E: cedula(str),fechaExp(strftime),fechaNac(strftime),fechaVenc(strftime)
+       tipo(str),donador(true/false),sangre(str),nombre(str),sede(str)
+    S: -
+    '''
     pdf = FPDF()
     pdf.add_page()
 
@@ -367,6 +422,27 @@ def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sed
 
     pdf.output(f'Licencia#{cedula}.pdf')   
     return ''
+
+def obtenerDatos(cedula):
+    '''
+    F: Obtiene los datos de la BD usando la cedula
+    E: cedula(str)
+    S: generarPDF()
+    '''
+    lista=lee('BaseDatos')
+    for i in range(len(lista)):
+        if cedula == lista[i].mostrarCedula():
+            fechaExp= lista[i].mostrarFechaExp()
+            fechaNac= lista[i].mostrarFechaNac()
+            fechaVenc= lista[i].mostrarFechaVenc()
+            tipo= lista[i].mostrarTipoLicencia()
+            donador= lista[i].mostrarDonador()
+            sangre= lista[i].mostrarSangre()
+            nombre= lista[i].mostrarNombre()
+            sede=lista[i].mostrarSede()
+            return generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sede)
+    else:
+        print('No se encontro la cedula que busca')
 
 ####################
 # 5 Reportes Excel #
