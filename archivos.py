@@ -1,6 +1,6 @@
 import pickle
 
-def grabaN(nomArchGrabar,lista):
+def graba(nomArchGrabar,lista):
     #Función que graba un archivo en una lista 
     try:
         f=open(nomArchGrabar,"w")

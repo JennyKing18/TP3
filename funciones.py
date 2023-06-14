@@ -19,7 +19,6 @@ from clases import Registro
 import aspose.pdf as ap
 from fpdf import FPDF
 
-
 #variables globales
 website= 'https://practicatest.cr/blog/licencias/tipos-licencia-conducir-costa-rica'
 resultado= requests.get(website) 
@@ -78,7 +77,9 @@ def crearXML():
     #hacer leible
     temp=BeautifulSoup(open('informacion.xml'),'xml')
     prettyTemp= temp.prettify()
+    print(f'\033[1;30;44m Subtipos \033[0;0m')
     graba('informacion.xml',prettyTemp)
+    print(obtenerSubtipos())
     return ''
 
 def obtenerSubtipos():
@@ -382,6 +383,7 @@ def generarPDF(cedula,fechaExp,fechaNac,fechaVenc,tipo,donador,sangre,nombre,sed
 # print(calcularEdad(fecha))
 # print(calcularFechaVenc(fecha))
 
-print(crearLicencias(3))
+print(crearXML())
+#print(crearLicencias(3))
 #print(obtenerDatos('4-5092-5826'))
 #print(obtenerSubtipos())
