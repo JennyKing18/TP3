@@ -314,7 +314,7 @@ def crearLicencias(num):
             puntaje='-'
             conductores.asignarPuntaje(puntaje)
         registro.append(conductores)
-        print([cedula,nombre],'\n')
+        #print([cedula,nombre],'\n')
         grabaBinario('BaseDatos',conductores)
         i+=1
     #mostrar lista
