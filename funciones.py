@@ -447,7 +447,13 @@ def obtenerDatos(cedula):
 ####################
 # 5 Reportes Excel #
 ####################
-
+def obtenerLista():
+    listaSedes=[]
+    for key,valor in generarSedes().items():
+        for elemento in valor:
+            if not elemento in listaSedes:
+                listaSedes.append(elemento)    
+    return listaSedes
 ###############
 # 6 Acerca de #
 ###############
@@ -459,7 +465,8 @@ def obtenerDatos(cedula):
 # print(calcularEdad(fecha))
 # print(calcularFechaVenc(fecha))
 
-print(crearXML())
+#print(crearXML())
+print(obtenerLista())
 #print(crearLicencias(3))
 #print(obtenerDatos('4-5092-5826'))
 #print(obtenerSubtipos())
